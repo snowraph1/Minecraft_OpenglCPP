@@ -1,10 +1,14 @@
 #include "Camera.h"
 
+#include <iostream>
+
 #include <glm.hpp>
 #include <vec3.hpp>
 #include <mat4x4.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+
+using namespace std;
 
 Camera::Camera(float ffov, float fnearPlane, float ffarPlane, int fframeBufferWidth, int fframeBufferHeight, glm::vec3 finitialPos, glm::vec3 finitialViewDirection)
 {
@@ -18,6 +22,8 @@ Camera::Camera(float ffov, float fnearPlane, float ffarPlane, int fframeBufferWi
 	position = finitialPos;
 	viewDirection = finitialViewDirection;
 	worldUp = glm::vec3(0.f, 1.f, 0.f);
+
+	std::cout << "allo \n";
 }
 
 glm::mat4 Camera::getWorldToViewMatrix() const {
@@ -32,6 +38,8 @@ glm::vec3 Camera::getCameraWorldPosition() const {
 	return position;
 }
 
-void Camera::moveCamera() {
-	position.z += 0.2f;
+void Camera::moveCamera(glm::vec3 move) {
+	//std::cout << position.z << "\n";
+	position += move;
+	//std::cout << position.z << "\n \n";
 }

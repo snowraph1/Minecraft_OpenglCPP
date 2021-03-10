@@ -24,6 +24,6 @@ public:
 
 	glm::vec3 getCameraWorldPosition() const;
 
-	void moveCamera();
+	void moveCamera(glm::vec3 move);
 };
 

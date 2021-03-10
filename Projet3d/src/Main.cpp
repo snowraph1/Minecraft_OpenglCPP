@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const float speed = 0.05f;
+const float speed = 0.01f;
 
 Vertex vertices[] =
 {
@@ -55,22 +55,30 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void UpdateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale)
+void UpdateInput(GLFWwindow* window, Camera& camera)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        position.z += speed;
-
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+    {
+        camera.moveCamera(glm::vec3(0.f, 0.f, -speed));
+    }
+   
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        //camera.moveCamera();
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        position.x -= speed;
+    {
+        camera.moveCamera(glm::vec3(0.f, 0.f, speed));
+    }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        position.x += speed;
+    {
+        camera.moveCamera(glm::vec3(-speed , 0.f, 0.f));
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        camera.moveCamera(glm::vec3(speed, 0.f, 0.f));
+    }
 }
 
 bool loadShaders(GLuint &program) {
@@ -320,12 +328,7 @@ int main(void)
         glfwPollEvents();
 
         //UPDATE ---
-        UpdateInput(window, position, rotation, scale);
-
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            camera.moveCamera();
-            cout << camera.getCameraWorldPosition().x << ", " << camera.getCameraWorldPosition().y << ", " << camera.getCameraWorldPosition().z << "\n";
-        }
+        UpdateInput(window, camera);
 
         //DRAW ---      
         //clear
@@ -335,9 +338,9 @@ int main(void)
         glUseProgram(core_program);
 
         //Model position, rotation, scale
-        rotation.x += 0.5f;
-        rotation.y += 0.5f;
-        rotation.z += 0.5f;
+        rotation.x += 0.02f;
+        rotation.y += 0.02f;
+        rotation.z += 0.02f;
 
         //position.z -= 0.03f;
 

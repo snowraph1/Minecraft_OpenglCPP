@@ -1,2 +1,3 @@
-﻿  Camera.cpp
-  Projet3d.vcxproj -> C:\Users\snowr\source\repos\Projet3d\Debug\Projet3d.exe
+﻿  Main.cpp
+C:\Users\snowr\Documents\Gamedev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(87,10): warning C4101: 'infoLog': unreferenced local variable
+  Projet3d.vcxproj -> C:\Users\snowr\Documents\Gamedev\Minecraft_OpenglCPP\Debug\Projet3d.exe
