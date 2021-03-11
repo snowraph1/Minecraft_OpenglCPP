@@ -14,12 +14,6 @@
 #include <gtc/type_ptr.hpp>
 #include <SOIL2.h>
 
-#include "shader.h"
+#include "Vertex.h"
+#include "Shader.h"
 #include "Camera.h"
-
-struct Vertex
-{
-	glm::vec3 position;
-	glm::vec3 color;
-	glm::vec2 texcoord;
-};

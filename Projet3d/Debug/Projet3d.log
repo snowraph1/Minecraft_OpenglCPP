@@ -1,3 +1,5 @@
 ﻿  Main.cpp
-C:\Users\snowr\Documents\Gamedev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(87,10): warning C4101: 'infoLog': unreferenced local variable
-  Projet3d.vcxproj -> C:\Users\snowr\Documents\Gamedev\Minecraft_OpenglCPP\Debug\Projet3d.exe
+C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(124,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(125,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(157,10): warning C4101: 'infoLog': unreferenced local variable
+  Projet3d.vcxproj -> C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Debug\Projet3d.exe

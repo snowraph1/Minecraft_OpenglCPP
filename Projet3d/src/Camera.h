@@ -24,6 +24,10 @@ public:
 
 	glm::vec3 getCameraWorldPosition() const;
 
-	void moveCamera(glm::vec3 move);
+	void move(glm::vec3 move);
+
+	void moveTo(glm::vec3 pos);
+
+	void changeDirection(glm::vec3 dir);
 };
 

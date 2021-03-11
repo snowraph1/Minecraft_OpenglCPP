@@ -22,8 +22,6 @@ Camera::Camera(float ffov, float fnearPlane, float ffarPlane, int fframeBufferWi
 	position = finitialPos;
 	viewDirection = finitialViewDirection;
 	worldUp = glm::vec3(0.f, 1.f, 0.f);
-
-	std::cout << "allo \n";
 }
 
 glm::mat4 Camera::getWorldToViewMatrix() const {
@@ -38,8 +36,14 @@ glm::vec3 Camera::getCameraWorldPosition() const {
 	return position;
 }
 
-void Camera::moveCamera(glm::vec3 move) {
-	//std::cout << position.z << "\n";
+void Camera::move(glm::vec3 move) {
 	position += move;
-	//std::cout << position.z << "\n \n";
+}
+
+void Camera::moveTo(glm::vec3 pos) {
+	position = pos;
+}
+
+void Camera::changeDirection(glm::vec3 dir) {
+	viewDirection = dir;
 }

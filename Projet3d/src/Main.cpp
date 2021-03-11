@@ -21,10 +21,10 @@ Vertex vertices[] =
     glm::vec3(-0.5f, -0.5f, 0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 4.f, 1.f / 16.f * 15.f), //bottom left
 
     //Bottom
-    glm::vec3(-0.5f, -0.5f, -0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 2.f, 1.f / 16.f * 16.f), //top left
-    glm::vec3(0.5f, -0.5f, -0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 2.f, 1.f / 16.f * 15.f), //bottom left
-    glm::vec3(0.5f, -0.5f, 0.5f),        glm::vec3(0.f, 0.f, 1.f),       glm::vec2(1.f / 16.f * 3.f, 1.f / 16.f * 15.f), //bottom right
-    glm::vec3(-0.5f, -0.5f, 0.5f),        glm::vec3(0.f, 1.f, 1.f),       glm::vec2(1.f / 16.f * 3.f, 1.f / 16.f * 16.f), //top right 
+    glm::vec3(-0.5f, -0.5f, -0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 2.f -0.001f, 1.f / 16.f * 16.f), //top left
+    glm::vec3(0.5f, -0.5f, -0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 2.f - 0.001f, 1.f / 16.f * 15.f), //bottom left
+    glm::vec3(0.5f, -0.5f, 0.5f),        glm::vec3(0.f, 0.f, 1.f),       glm::vec2(1.f / 16.f * 3.f - 0.001f, 1.f / 16.f * 15.f), //bottom right
+    glm::vec3(-0.5f, -0.5f, 0.5f),        glm::vec3(0.f, 1.f, 1.f),       glm::vec2(1.f / 16.f * 3.f - 0.001f, 1.f / 16.f * 16.f), //top right 
 
     //Top
     glm::vec3(-0.5f, 0.5f, -0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 8.f, 1.f / 16.f * 14.f), //top left
@@ -55,30 +55,100 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+glm::vec3 camDirection;
+glm::vec3 worldUp(0.f, 1.f, 0.f);
+
 void UpdateInput(GLFWwindow* window, Camera& camera)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
+    glm::vec3 camDirNormalized = glm::normalize(camDirection);
+    glm::vec3 camCross = glm::normalize(glm::cross(camDirNormalized, worldUp));
+
+    if (camCross == glm::vec3(0.f)) {
+        camCross = glm::vec3(1.f, 0.f, 0.f);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera.move(worldUp * speed);
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        camera.move(worldUp * -speed);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
     {
-        camera.moveCamera(glm::vec3(0.f, 0.f, -speed));
+        camera.move(glm::normalize(glm::vec3(camDirNormalized.x, 0.f, camDirNormalized.z)) * speed);
     }
    
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.moveCamera(glm::vec3(0.f, 0.f, speed));
+        camera.move(glm::normalize(glm::vec3(camDirNormalized.x, 0.f, camDirNormalized.z)) * -speed);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        camera.moveCamera(glm::vec3(-speed , 0.f, 0.f));
+        camera.move(camCross * -speed);
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        camera.moveCamera(glm::vec3(speed, 0.f, 0.f));
+        camera.move(camCross * speed);
     }
+}
+
+float dt = 0.f;
+float curTime = 0.f;
+float lastTime = 0.f;
+
+double lastX = 0.0;
+double lastY = 0.0;
+double mouseX = 0.0;
+double mouseY = 0.0;
+double mouseOffsetX = 0.0;
+double mouseOPffsetY = 0.0;
+bool firstMouse = true;
+
+float yaw = 0.f;
+float pitch = 0.f;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) 
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    camDirection = direction;
+}
+
+void UpdateDt() {
+    curTime = static_cast<float>(glfwGetTime());
+    dt = curTime - lastTime;
+    lastTime = curTime;
 }
 
 bool loadShaders(GLuint &program) {
@@ -184,7 +254,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1600, 900, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -321,6 +391,9 @@ int main(void)
 
     glUseProgram(0);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -328,7 +401,9 @@ int main(void)
         glfwPollEvents();
 
         //UPDATE ---
+        UpdateDt();
         UpdateInput(window, camera);
+        camera.changeDirection(camDirection);
 
         //DRAW ---      
         //clear
