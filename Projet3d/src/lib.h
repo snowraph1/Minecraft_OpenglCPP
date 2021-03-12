@@ -17,3 +17,7 @@
 #include "Vertex.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Mesh.h"
+#include "Model.h"
+#include "BlockTypes.h"
+#include "Chunk.h"

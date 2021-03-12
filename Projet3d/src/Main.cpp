@@ -2,53 +2,7 @@
 
 using namespace std;
 
-const float speed = 0.01f;
-
-Vertex vertices[] =
-{
-    //Front
-    glm::vec3(-0.5f, 0.5f, -0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 3.f, 1.f / 16.f * 16.f), //top left
-    glm::vec3(-0.5f, -0.5f, -0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 3.f, 1.f / 16.f * 15.f), //bottom left
-    glm::vec3(0.5f, -0.5f, -0.5f),        glm::vec3(0.f, 0.f, 1.f),       glm::vec2(1.f / 16.f * 4.f, 1.f / 16.f * 15.f), //bottom right
-    glm::vec3(0.5f, 0.5f, -0.5f),        glm::vec3(0.f, 1.f, 1.f),       glm::vec2(1.f / 16.f * 4.f, 1.f / 16.f * 16.f), //top right 
-
-    //Right
-    glm::vec3(0.5f, 0.5f, 0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 3.f, 1.f / 16.f * 16.f), //top right
-    glm::vec3(0.5f, -0.5f, 0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 3.f, 1.f / 16.f * 15.f), //bottom right
-
-    //Back
-    glm::vec3(-0.5f, 0.5f, 0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 4.f, 1.f / 16.f * 16.f), //top left
-    glm::vec3(-0.5f, -0.5f, 0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 4.f, 1.f / 16.f * 15.f), //bottom left
-
-    //Bottom
-    glm::vec3(-0.5f, -0.5f, -0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 2.f -0.001f, 1.f / 16.f * 16.f), //top left
-    glm::vec3(0.5f, -0.5f, -0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 2.f - 0.001f, 1.f / 16.f * 15.f), //bottom left
-    glm::vec3(0.5f, -0.5f, 0.5f),        glm::vec3(0.f, 0.f, 1.f),       glm::vec2(1.f / 16.f * 3.f - 0.001f, 1.f / 16.f * 15.f), //bottom right
-    glm::vec3(-0.5f, -0.5f, 0.5f),        glm::vec3(0.f, 1.f, 1.f),       glm::vec2(1.f / 16.f * 3.f - 0.001f, 1.f / 16.f * 16.f), //top right 
-
-    //Top
-    glm::vec3(-0.5f, 0.5f, -0.5f),         glm::vec3(1.f, 0.f, 0.f),       glm::vec2(1.f / 16.f * 8.f, 1.f / 16.f * 14.f), //top left
-    glm::vec3(0.5f, 0.5f, -0.5f),       glm::vec3(0.f, 1.f, 0.f),       glm::vec2(1.f / 16.f * 8.f, 1.f / 16.f * 13.f), //bottom left
-    glm::vec3(0.5f, 0.5f, 0.5f),        glm::vec3(0.f, 0.f, 1.f),       glm::vec2(1.f / 16.f * 9.f, 1.f / 16.f * 13.f), //bottom right
-    glm::vec3(-0.5f, 0.5f, 0.5f),        glm::vec3(0.f, 1.f, 1.f),       glm::vec2(1.f / 16.f * 9.f, 1.f / 16.f * 14.f), //top right 
-};
-unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
-
-GLuint indices[] = {
-    2, 1, 0,
-    3, 2, 0,
-    5, 2, 3,
-    3, 4, 5,
-    7, 5, 4,
-    6, 7, 4,
-    1, 6, 0,
-    1, 7, 6,
-    8, 9, 10,
-    8, 10, 11,
-    14, 13, 12,
-    15, 14, 12
-};
-unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
+float speed = 10;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -57,6 +11,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 glm::vec3 camDirection;
 glm::vec3 worldUp(0.f, 1.f, 0.f);
+
+float dt = 0.f;
+float curTime = 0.f;
+float lastTime = 0.f;
 
 void UpdateInput(GLFWwindow* window, Camera& camera)
 {
@@ -70,36 +28,34 @@ void UpdateInput(GLFWwindow* window, Camera& camera)
         camCross = glm::vec3(1.f, 0.f, 0.f);
     }
 
+    float newSpeed = speed * dt;
+
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camera.move(worldUp * speed);
+        camera.move(worldUp * newSpeed);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        camera.move(worldUp * -speed);
+        camera.move(worldUp * -newSpeed);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
     {
-        camera.move(glm::normalize(glm::vec3(camDirNormalized.x, 0.f, camDirNormalized.z)) * speed);
+        camera.move(glm::normalize(glm::vec3(camDirNormalized.x, 0.f, camDirNormalized.z)) * newSpeed);
     }
    
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.move(glm::normalize(glm::vec3(camDirNormalized.x, 0.f, camDirNormalized.z)) * -speed);
+        camera.move(glm::normalize(glm::vec3(camDirNormalized.x, 0.f, camDirNormalized.z)) * -newSpeed);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        camera.move(camCross * -speed);
+        camera.move(camCross * -newSpeed);
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        camera.move(camCross * speed);
+        camera.move(camCross * newSpeed);
     }
 }
-
-float dt = 0.f;
-float curTime = 0.f;
-float lastTime = 0.f;
 
 double lastX = 0.0;
 double lastY = 0.0;
@@ -151,93 +107,6 @@ void UpdateDt() {
     lastTime = curTime;
 }
 
-bool loadShaders(GLuint &program) {
-    bool loadSuccess = true;
-
-    char infoLog[512];
-    GLint success;
-
-    string temp = "";
-    string src = "";
-    ifstream in_file;
-
-    //vertex
-    in_file.open("vertex_core.glsl");
-
-    if (in_file.is_open()) {
-        while (getline(in_file, temp))
-        {
-            src += temp + "\n";
-        }
-    }
-    else {
-        cout << "vertex shader pas ouvert \n";
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar* vertSrc = src.c_str();
-    glShaderSource(vertexShader, 1, &vertSrc, NULL);
-    glCompileShader(vertexShader);
-
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        cout << "Vertex shader pas compile \n";
-        loadSuccess = false;
-    }
-
-    temp = "";
-    src = "";
-
-    //fragment
-    in_file.open("fragment_core.glsl");
-
-    if (in_file.is_open()) {
-        while (getline(in_file, temp))
-        {
-            src += temp + "\n";
-        }
-    }
-    else {
-        cout << "fragment shader pas ouvert \n";
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* fragSrc = src.c_str();
-    glShaderSource(fragmentShader, 1, &fragSrc, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        cout << "Fragment shader pas compile \n";
-        loadSuccess = false;
-    }
-
-    program = glCreateProgram();
-
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-
-    glLinkProgram(program);
-
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        cout << "Erreur program \n";
-        loadSuccess = false;
-    }
-
-    glUseProgram(0);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return loadSuccess;
-}
-
 int main(void)
 {
     GLFWwindow* window;
@@ -282,45 +151,17 @@ int main(void)
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS); // Or GL_LEQUAL
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     //Shaders
-    GLuint core_program;
-    if (!loadShaders(core_program)) {
-        cout << "Shaders pas ok \n";
-        glfwTerminate();
-    }
-
-    //
-    GLuint VAO;
-    glCreateVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    //position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-    glEnableVertexAttribArray(0);
-    //color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
-    glEnableVertexAttribArray(1);
-    //texture
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
-    glEnableVertexAttribArray(2);
-
-    glBindVertexArray(0);
-
+    Shader core_program("vertex_core.glsl", "fragment_core.glsl");
 
     //TEXTURE
     int image_width = 0;
@@ -330,11 +171,6 @@ int main(void)
     GLuint texture0;
     glGenTextures(1, &texture0);
     glBindTexture(GL_TEXTURE_2D, texture0);
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -350,49 +186,16 @@ int main(void)
     glBindTexture(GL_TEXTURE_2D, 0);
     SOIL_free_image_data(image);
 
-    glm::vec3 position(0.f);
-    glm::vec3 rotation(0.f);
-    glm::vec3 scale(1.f);
-
-    glm::mat4 ModelMatrix(1.f);
-    ModelMatrix = glm::translate(ModelMatrix, position); 
-    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
-    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
-    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
-    ModelMatrix = glm::scale(ModelMatrix, scale);
-
-    /*
-    glm::vec3 camPosition(0.f, 0.f, 2.f);
-    glm::vec3 worldUp = glm::vec3(0.f, 1.f, 0.f);
-    glm::vec3 camFront = glm::vec3(0.f, 0.f, -1.f);
-
-    glm::mat4 ViewMatrix(1.f);
-    ViewMatrix = glm::lookAt(camPosition, camPosition + camFront, worldUp);
-
-    Camera camera(camPosition, camFront);
-
-    float fov = 90.f;
-    float nearPlane = 0.1f;
-    float farPlane = 1000.f;
-
-    glm::mat4 ProjectionMatrix(1.f);
-    ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(frameBufferWidth) / frameBufferheight, nearPlane, farPlane);
-    */
-
     glm::vec3 camPosition(0.f, 0.f, 2.f);
     glm::vec3 camFront = glm::vec3(0.f, 0.f, -1.f);
     Camera camera = Camera(90, 0.1f, 1000.f, frameBufferWidth, frameBufferheight, glm::vec3 (0.f, 0.f, 2.f), glm::vec3(0.f, 0.f, -1.f));
-
-    glUseProgram(core_program);
-
-    glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
-    glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(camera.getWorldToViewMatrix()));
-    glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(camera.getProjectionMatrix()));
-
-    glUseProgram(0);
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
+
+    core_program.use();
+
+    Chunk chunk = Chunk(glm::vec3(0.f));
+    Chunk chunk1 = Chunk(glm::vec3(16.f, 0.f, 0.f));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -408,46 +211,27 @@ int main(void)
         //DRAW ---      
         //clear
         glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        //UpdateCamera
+        glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferheight);
+        core_program.setMat4fv(camera.getWorldToViewMatrix(), "ViewMatrix");
+        core_program.setMat4fv(camera.getProjectionMatrix(), "ProjectionMatrix");
 
         //use a program
-        glUseProgram(core_program);
-
-        //Model position, rotation, scale
-        rotation.x += 0.02f;
-        rotation.y += 0.02f;
-        rotation.z += 0.02f;
-
-        //position.z -= 0.03f;
-
-        ModelMatrix = glm::mat4(1.f);
-        ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f));
-        ModelMatrix = glm::translate(ModelMatrix, position);
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
-        ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
-        ModelMatrix = glm::scale(ModelMatrix, scale);
-        glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
-
-        glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferheight);
-
-        /*
-        glm::mat4 ProjectionMatrix(1.f);
-        ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(frameBufferWidth) / frameBufferheight, nearPlane, farPlane);
-        glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
-        */
-
-        glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(camera.getWorldToViewMatrix()));
-        glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(camera.getProjectionMatrix()));
+        core_program.use();
 
         //activate texture
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture0);
 
         //bind vertex array object
-        glBindVertexArray(VAO);
+        //glBindVertexArray(VAO);
 
         //draw
-        glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
+        chunk.renderChunk(&core_program);
+        chunk1.renderChunk(&core_program);
 
         //end draw
         glfwSwapBuffers(window);
@@ -462,9 +246,6 @@ int main(void)
     //END OF PROGRAM
     glfwDestroyWindow(window);
     glfwTerminate();
-
-    //DELETE PROGRAM
-    glDeleteProgram(core_program);
 
     return 0;
 }

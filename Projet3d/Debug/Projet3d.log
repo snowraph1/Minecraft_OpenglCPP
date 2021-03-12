@@ -1,5 +1,10 @@
-﻿  Main.cpp
-C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(124,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(125,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Main.cpp(157,10): warning C4101: 'infoLog': unreferenced local variable
+﻿  Chunk.cpp
+C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Shader.h(42,14): warning C4101: 'infoLog': unreferenced local variable
+C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Shader.h(60,14): warning C4101: 'infoLog': unreferenced local variable
+C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Projet3d\src\Chunk.cpp(21,15): warning C4244: 'initializing': conversion from 'genFIType' to 'int', possible loss of data
+          with
+          [
+              genFIType=float
+          ]
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Projet3d.vcxproj -> C:\Users\snowraph\Documents\GameDev\Minecraft_OpenglCPP\Debug\Projet3d.exe
